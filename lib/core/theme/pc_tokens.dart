@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Values mirror design/tokens.json. Widgets read colors through
-/// `context.pc` and sizes through the constant classes below.
+/// Design tokens. Widgets read colors through `context.pc` and sizes through
+/// the constant classes below.
 @immutable
 class PcColors extends ThemeExtension<PcColors> {
   const PcColors({

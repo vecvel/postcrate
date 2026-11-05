@@ -1,6 +1,4 @@
-/// Social platforms Postcrate knows how to share to and recognize links from.
-/// Single source of truth for limits, native identifiers and composer links;
-/// see docs/sharing-architecture.md. Limits change over time; keep them here.
+/// Platforms Postcrate shares to. Text limits change over time.
 enum SocialApp {
   facebook(
     'Facebook',

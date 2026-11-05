@@ -1,4 +1,4 @@
-// Postcrate mark: single source of truth for every logo and icon asset.
+// Generates the Postcrate logo and app icon SVGs.
 // Run: node design/logo/generate.mjs  ->  writes SVGs into design/logo/out/
 //
 // Construction (24-unit grid), logo P1 "Orbit flight":

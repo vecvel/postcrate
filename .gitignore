@@ -44,4 +44,28 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Local secrets
+# Generated logo SVGs (design/logo/generate.mjs)
+/design/logo/out/
+
+# AI assistants and agents
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+GEMINI.md
+.gemini/
+.codex/
+.cursor/
+.cursorrules
+.cursorignore
+.windsurf/
+.windsurfrules
+.aider*
+.continue/
+.copilot/
+.github/copilot-instructions.md
+.roo/
+.clinerules
+.kiro/
+.junie/
+.mcp.json

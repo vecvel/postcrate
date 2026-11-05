@@ -1,13 +1,7 @@
 import UIKit
 
-/// Native sharing for Postcrate. See docs/sharing-architecture.md.
-///
-/// 1. The caption is written to UIPasteboard before anything opens, so apps
-///    that strip pre-filled text (Facebook, Instagram) can be pasted into.
-/// 2. Images go in as UIImage, other media as file URLs.
-/// 3. Text goes in through an item source that withholds it from apps known
-///    to drop or mishandle text alongside media.
-/// 4. The iPad popover is always anchored, so the sheet never crashes there.
+/// Share sheet for posts. The caption is copied to the pasteboard first
+/// because Facebook and Instagram drop pre-filled text.
 enum PostcrateShare {
   /// Activity types (or fragments of them) that ignore pre-filled text.
   static let textStrippingActivities = [

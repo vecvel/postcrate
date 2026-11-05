@@ -20,13 +20,8 @@ import java.io.FileOutputStream
 import java.util.concurrent.Executors
 
 /**
- * Reads technical details from media files and renders preview frames, on
- * channel "com.vecvel.postcrate/media".
- *
- * - probe(path): container, codecs (MIME), size, rotation, duration, bitrate,
- *   frame rate, audio sample rate and channels, color, HDR, pages.
- * - thumbnail(path, outPath, atMs, maxSize): JPEG of a video frame or the
- *   first page of a PDF.
+ * Media details (codecs, size, duration, bitrate, audio, pages) and preview
+ * frames, on "com.vecvel.postcrate/media".
  */
 class PostcrateMediaPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
   companion object {

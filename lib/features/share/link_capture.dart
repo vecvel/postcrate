@@ -33,8 +33,7 @@ class LinkOffer {
 
 final linkCaptureProvider = NotifierProvider<LinkCapture, LinkOffer?>(LinkCapture.new);
 
-/// Finds out where a post was published. See "Where did it get shared?" in
-/// docs/sharing-architecture.md. Checks the clipboard when the app comes
+/// Finds out where a post was published. Checks the clipboard when the app comes
 /// back after a share, and accepts links shared into Postcrate on Android.
 class LinkCapture extends Notifier<LinkOffer?> with WidgetsBindingObserver {
   static const _window = Duration(hours: 24);

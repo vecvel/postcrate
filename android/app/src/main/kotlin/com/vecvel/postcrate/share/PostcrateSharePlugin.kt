@@ -25,18 +25,9 @@ import io.flutter.plugin.common.PluginRegistry
 import java.io.File
 
 /**
- * Native sharing for Postcrate on channel "com.vecvel.postcrate/share".
- * See docs/sharing-architecture.md.
- *
- * 1. The caption goes to the ClipboardManager first, so apps that strip
- *    EXTRA_TEXT (Facebook, Instagram) can be long-press pasted into.
- * 2. Files are copied into cacheDir/share and exposed as content:// URIs via
- *    FileProvider; raw file:// paths are never sent.
- * 3. ACTION_SEND / ACTION_SEND_MULTIPLE carry EXTRA_STREAM plus EXTRA_TEXT,
- *    with ClipData and read grants for every URI.
- * 4. With an installed target package the chooser is skipped; otherwise the
- *    chooser reports the picked app through an IntentSender callback.
- * 5. Text shared into Postcrate (a post link) is forwarded to Dart.
+ * Sharing on "com.vecvel.postcrate/share". The caption also goes to the
+ * clipboard because Facebook and Instagram drop EXTRA_TEXT. Files are shared
+ * as FileProvider content:// URIs.
  */
 class PostcrateSharePlugin :
   FlutterPlugin,

@@ -4,13 +4,8 @@ import ImageIO
 import PDFKit
 import UIKit
 
-/// Reads technical details from media files and renders preview frames, on
-/// channel "com.vecvel.postcrate/media".
-///
-/// - probe(path): container, codecs (FourCC), size, rotation, duration,
-///   bitrate, frame rate, audio sample rate and channels, color, HDR, pages.
-/// - thumbnail(path, outPath, atMs, maxSize): JPEG of a video frame or the
-///   first page of a PDF.
+/// Media details (codecs, size, duration, bitrate, audio, pages) and preview
+/// frames, on "com.vecvel.postcrate/media".
 final class PostcrateMediaPlugin: NSObject, FlutterPlugin {
   static let channelName = "com.vecvel.postcrate/media"
 

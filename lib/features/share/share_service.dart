@@ -19,7 +19,7 @@ class ShareReport {
   final bool captionOnClipboard;
 }
 
-/// Sends a post to installed apps. See docs/sharing-architecture.md.
+/// Sends a post to installed apps.
 ///
 /// Text and files go through the native share module, which copies the
 /// caption to the clipboard first. Title, poll, alt text, first comment,

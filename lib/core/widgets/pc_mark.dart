@@ -2,11 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
 
-/// The Postcrate mark ("Orbit flight"), painted from the same construction as
-/// design/logo/generate.mjs on a 24-unit grid: an orbit ring (r 8.5, stroke
-/// 2.5) with a paper plane flying clockwise on it at -45 degrees. The ring's
-/// round ends stop 1.5 units from the plane; the end angles below are the
-/// values the generator solves for.
+/// The Postcrate mark, on a 24-unit grid: an orbit ring (r 8.5, stroke 2.5)
+/// with a paper plane flying clockwise on it at -45 degrees. Keep in sync with
+/// design/logo/generate.mjs, which solves the arc end angles used below.
 class PcMark extends StatelessWidget {
   const PcMark({super.key, this.size = 26, required this.color});
 
