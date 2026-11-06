@@ -1,0 +1,49 @@
+default_platform(:android)
+
+# Credentials come from fastlane/.env (ignored by git). See .env.example.
+# Run with LC_ALL=en_US.UTF-8 so the listing text uploads cleanly.
+
+platform :android do
+  desc "Upload the release AAB with the store listing to a track (default: alpha = closed testing, draft)"
+  lane :deploy do |options|
+    upload_to_play_store(
+      track: options[:track] || "alpha",
+      release_status: options[:status] || "draft",
+      aab: "../build/app/outputs/bundle/release/app-release.aab"
+    )
+  end
+
+  desc "Update only the store listing, screenshots and graphics"
+  lane :metadata do
+    upload_to_play_store(
+      track: "alpha",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_changelogs: true
+    )
+  end
+end
+
+platform :android do
+  desc "Set the store contact details (email, phone, website)"
+  lane :contact do
+    require "googleauth"
+    require "google/apis/androidpublisher_v3"
+    pub = Google::Apis::AndroidpublisherV3::AndroidPublisherService.new
+    pub.authorization = Google::Auth::ServiceAccountCredentials.make_creds(
+      json_key_io: File.open(ENV["PLAY_JSON_KEY_FILE"]),
+      scope: "https://www.googleapis.com/auth/androidpublisher"
+    )
+    pkg = "com.vecvel.postcrate"
+    edit = pub.insert_edit(pkg)
+    details = Google::Apis::AndroidpublisherV3::AppDetails.new(
+      default_language: "en-US",
+      contact_email: "support@vecvel.com",
+      contact_phone: "+918099103890",
+      contact_website: "https://vecvel.com/android/postcrate/"
+    )
+    pub.update_edit_detail(pkg, edit.id, details)
+    pub.commit_edit(pkg, edit.id)
+    UI.success("Contact details updated")
+  end
+end

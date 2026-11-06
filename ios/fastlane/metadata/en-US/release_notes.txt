@@ -1,0 +1,1 @@
+First release: write posts once, keep their media together, share to any app and keep track of where each post went.

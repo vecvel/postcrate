@@ -1,0 +1,20 @@
+Ever finished a post and then wondered where you actually shared it? Postcrate keeps every post in one place and remembers where each one went.
+
+Write once, share anywhere
+• Write a post once, with its photos, videos and files
+• Send it to Instagram, X, LinkedIn, WhatsApp, YouTube or any app on your phone through the system share sheet
+• See per-app character counts while you write
+
+Remember where it went
+• Every share is recorded, with the app and the time
+• Save the link to the live post and open it later
+
+Know your video fits
+• Duration, size and format checks for the apps you are posting to, including Reels and Shorts
+
+Private by design
+• No account, no server, no tracking
+• Everything stays on your phone
+• Backups are a single file you keep wherever you like
+
+Free and open source: github.com/vecvel/postcrate

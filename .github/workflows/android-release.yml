@@ -1,0 +1,107 @@
+name: Android release
+
+# Every push to main checks the version in pubspec.yaml. When no tag exists
+# for it yet, this builds a signed APK and AAB, tags the commit (v1.2.3) and
+# publishes a GitHub release. Bump `version:` in pubspec.yaml to release.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(sed -nE 's/^version:[[:space:]]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/p' pubspec.yaml)
+          if [ -z "$version" ]; then echo "No version in pubspec.yaml"; exit 1; fi
+          tag="v$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null || gh release view "$tag" >/dev/null 2>&1; then
+            echo "$tag already released, nothing to do."
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Releasing $tag."
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-java@v4
+        if: steps.version.outputs.new == 'true'
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - uses: subosito/flutter-action@v2
+        if: steps.version.outputs.new == 'true'
+        with:
+          flutter-version: 3.44.2
+          channel: stable
+          cache: true
+
+      - name: Set up signing
+        if: steps.version.outputs.new == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then echo "Missing ANDROID_KEYSTORE_BASE64 secret"; exit 1; fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/release.jks
+          {
+            echo "storeFile=release.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > android/key.properties
+
+      - name: Build
+        if: steps.version.outputs.new == 'true'
+        run: |
+          flutter pub get
+          flutter build apk --release
+          flutter build appbundle --release
+          cp build/app/outputs/flutter-apk/app-release.apk postcrate-android.apk
+          cp build/app/outputs/bundle/release/app-release.aab postcrate-android.aab
+
+      - name: Check signature
+        if: steps.version.outputs.new == 'true'
+        run: |
+          apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          "$apksigner" verify --print-certs postcrate-android.apk | grep -q "CN=Vecvel" || { echo "APK is not signed with the release key"; exit 1; }
+
+      - name: Publish release
+        if: steps.version.outputs.new == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Postcrate ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          make_latest: true
+          files: |
+            postcrate-android.apk
+            postcrate-android.aab
+
+      - name: Clean up signing files
+        if: always()
+        run: rm -f android/release.jks android/key.properties

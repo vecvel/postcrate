@@ -1,0 +1,36 @@
+default_platform(:ios)
+
+# Credentials come from fastlane/.env (ignored by git). See .env.example.
+
+platform :ios do
+  before_all do
+    app_store_connect_api_key(
+      key_id: ENV["APPLE_API_KEY_ID"],
+      issuer_id: ENV["APPLE_API_ISSUER"],
+      key_filepath: ENV["APPLE_API_KEY_PATH"]
+    )
+  end
+
+  desc "Upload store text and screenshots to App Store Connect"
+  lane :metadata do
+    deliver(
+      skip_binary_upload: true,
+      overwrite_screenshots: true,
+      submit_for_review: false,
+      force: true,
+      run_precheck_before_submit: false
+    )
+  end
+
+  desc "Build and upload a new build to App Store Connect"
+  lane :upload do
+    sh("cd ../.. && flutter build ipa --release --export-options-plist=ios/ExportOptions.plist")
+    deliver(ipa: "../build/ios/ipa/postcrate.ipa", skip_metadata: true, skip_screenshots: true, force: true, run_precheck_before_submit: false)
+  end
+
+  desc "Submit the current version for review"
+  lane :submit do
+    deliver(skip_binary_upload: true, skip_metadata: true, skip_screenshots: true, submit_for_review: true, automatic_release: true, force: true, precheck_include_in_app_purchases: false,
+            submission_information: { add_id_info_uses_idfa: false, export_compliance_uses_encryption: false })
+  end
+end
