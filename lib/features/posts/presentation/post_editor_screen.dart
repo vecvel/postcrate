@@ -717,7 +717,12 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: PcSpace.cardPadding),
-              child: PcButton(label: 'Share to any app', icon: CupertinoIcons.share, expand: true, onPressed: () => _share()),
+              child: PcButton(
+                label: 'Share to any app',
+                icon: CupertinoIcons.share,
+                expand: true,
+                onPressed: () => _share(),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: PcSpace.cardPadding),
