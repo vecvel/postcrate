@@ -339,6 +339,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
       },
       child: Scaffold(
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               PcNavBar(
@@ -356,7 +357,12 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
                     ? const Center(child: CupertinoActivityIndicator())
                     : ListView(
                         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                        padding: const EdgeInsets.fromLTRB(PcSpace.gutter, 0, PcSpace.gutter, PcSpace.xxl),
+                        padding: EdgeInsets.fromLTRB(
+                          PcSpace.gutter,
+                          0,
+                          PcSpace.gutter,
+                          PcSpace.xxl + MediaQuery.viewPaddingOf(context).bottom,
+                        ),
                         children: [
                           ..._postSection(context),
                           ..._mediaSection(context),
@@ -705,29 +711,40 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
     return [
       const PcSectionLabel('Share'),
       PcCard(
+        padding: const EdgeInsets.symmetric(vertical: PcSpace.cardPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            PcButton(label: 'Share to any app', icon: CupertinoIcons.share, expand: true, onPressed: () => _share()),
-            _label('Planned for'),
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: [
-                for (final a in apps)
-                  PcChip(
-                    label: a.label,
-                    selected: _targets.contains(a),
-                    onTap: () => setState(() {
-                      if (_targets.contains(a)) {
-                        _targets.remove(a);
-                      } else {
-                        _targets.add(a);
-                        _variants.putIfAbsent(a, TextEditingController.new);
-                      }
-                    }),
-                  ),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: PcSpace.cardPadding),
+              child: PcButton(label: 'Share to any app', icon: CupertinoIcons.share, expand: true, onPressed: () => _share()),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: PcSpace.cardPadding),
+              child: _label('Planned for'),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: PcSpace.cardPadding),
+              child: Row(
+                children: [
+                  for (final a in apps) ...[
+                    if (a != apps.first) const SizedBox(width: 6),
+                    PcChip(
+                      label: a.label,
+                      selected: _targets.contains(a),
+                      onTap: () => setState(() {
+                        if (_targets.contains(a)) {
+                          _targets.remove(a);
+                        } else {
+                          _targets.add(a);
+                          _variants.putIfAbsent(a, TextEditingController.new);
+                        }
+                      }),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ],
         ),

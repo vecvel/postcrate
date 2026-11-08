@@ -22,6 +22,17 @@ platform :ios do
     )
   end
 
+  desc "Upload App Review notes, plus a screen recording: fastlane review video:/path/demo.mp4"
+  lane :review do |options|
+    deliver(
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      app_review_attachment_file: options[:video],
+      force: true,
+      run_precheck_before_submit: false
+    )
+  end
+
   desc "Build and upload a new build to App Store Connect"
   lane :upload do
     sh("cd ../.. && flutter build ipa --release --export-options-plist=ios/ExportOptions.plist")
@@ -29,8 +40,8 @@ platform :ios do
   end
 
   desc "Submit the current version for review"
-  lane :submit do
-    deliver(skip_binary_upload: true, skip_metadata: true, skip_screenshots: true, submit_for_review: true, automatic_release: true, force: true, precheck_include_in_app_purchases: false,
+  lane :submit do |options|
+    deliver(skip_binary_upload: true, skip_metadata: true, skip_screenshots: true, submit_for_review: true, build_number: options[:build], automatic_release: true, force: true, precheck_include_in_app_purchases: false,
             submission_information: { add_id_info_uses_idfa: false, export_compliance_uses_encryption: false })
   end
 end

@@ -1,1 +1,28 @@
-No sign-in needed. Create a post, attach a photo or video, tap Share and pick any app. Everything is stored on the device.
+1. Screen recording
+Attached to this submission: a recording made on a physical iPhone 17 running iOS 27.0.1. It starts with launching Postcrate from the home screen search, then shows editing a post, writing a new post, choosing the apps it is planned for, the Share to any app button, the Backup screen, the Library with its post menu, collections and filters. Postcrate has no accounts, no sign-in, no user-generated content shared between users, and no paid content or in-app purchases.
+
+2. Purpose and audience
+Postcrate is a drafting and sharing tool for people who post the same content to several social apps: creators, small businesses and anyone who cross-posts. You write a post once, attach photos or videos, and send it to any app through the iOS share sheet or that app's own compose link. Postcrate keeps a library of what you wrote and where you shared it, so posts are not lost in each app's drafts. Everything stays on the device.
+
+3. How to use it
+No login, demo account or sample files are needed.
+- Open the app and tap + to create a post.
+- Type text and tap the media button to add photos or videos from the library.
+- Tap Share and choose any app from the share sheet, or a platform shortcut (it opens that platform's public share link with the text filled in).
+- The post appears in Library with the platforms it was shared to.
+- The Backup tab exports all posts and media to a single file through the Files app, and can restore it.
+- An optional reminder can be set on a post; it uses a local notification only.
+
+4. External services
+None are required for the core features. There is no backend, analytics, advertising, authentication, payment or AI service. The app only makes network requests when the user acts:
+- When a link is pasted into a post, the app fetches that web page to show a title and image preview.
+- Platform shortcuts open the platform's public share URL (for example x.com/intent/post, facebook.com/sharer, linkedin.com, reddit.com/submit, wa.me, t.me) in the browser or the platform's app.
+Photos, videos and posts are stored only on the device and are never uploaded by Postcrate.
+
+5. Regional differences
+None. The app works the same in all regions.
+
+6. Regulated industry or third-party material
+Not applicable. Postcrate is not in a regulated industry and contains no protected third-party content. Users share their own content.
+
+Contact: support@vecvel.com, +91 8099103890.
