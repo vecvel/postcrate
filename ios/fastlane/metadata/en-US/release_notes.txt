@@ -1,1 +1,1 @@
-First release: write posts once, keep their media together, share to any app and keep track of where each post went.
+Save to Postcrate: share photos, videos, audio, documents, links or text from any app into Postcrate, then start a new post with them or add them to one you already have.

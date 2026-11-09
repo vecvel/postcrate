@@ -8,7 +8,6 @@ import '../../core/providers.dart';
 import '../posts/domain/post.dart';
 import '../posts/domain/social_app.dart';
 import 'post_links.dart';
-import 'share_providers.dart';
 
 /// A post (and the share it probably belongs to) that a captured link can be attached to.
 @immutable
@@ -34,7 +33,7 @@ class LinkOffer {
 final linkCaptureProvider = NotifierProvider<LinkCapture, LinkOffer?>(LinkCapture.new);
 
 /// Finds out where a post was published. Checks the clipboard when the app comes
-/// back after a share, and accepts links shared into Postcrate on Android.
+/// back after a share, and takes post links shared into Postcrate.
 class LinkCapture extends Notifier<LinkOffer?> with WidgetsBindingObserver {
   static const _window = Duration(hours: 24);
 
@@ -51,9 +50,6 @@ class LinkCapture extends Notifier<LinkOffer?> with WidgetsBindingObserver {
     if (_started) return;
     _started = true;
     WidgetsBinding.instance.addObserver(this);
-    final native = ref.read(nativeShareProvider);
-    native.onIncomingText = (text) => unawaited(_incoming(text));
-    unawaited(native.takeIncomingText().then((t) => t == null ? null : _incoming(t)).catchError((_) => null));
   }
 
   bool _wasBackgrounded = false;
@@ -114,22 +110,21 @@ class LinkCapture extends Notifier<LinkOffer?> with WidgetsBindingObserver {
     state = LinkOffer(link: link, candidates: _rank(awaiting, link), fromShareSheet: false);
   }
 
-  Future<void> _incoming(String text) async {
-    final link = PostLinks.find(text) ?? _anyUrl(text);
-    if (link == null) return;
+  /// Offers a post link shared into Postcrate when a recent share is still
+  /// waiting for one. Returns false otherwise, so the link can be saved as
+  /// a new post instead.
+  Future<bool> offerShared(String text) async {
+    final link = PostLinks.find(text);
+    if (link == null) return false;
     final posts = await ref.read(postsRepositoryProvider).getAll();
     final awaiting = _awaiting(posts);
+    if (awaiting.isEmpty) return false;
     final ranked = _rank(awaiting, link);
     final waitingIds = ranked.map((c) => c.post.id).toSet();
     final recent = [...posts]..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     final rest = [for (final p in recent.where((p) => !waitingIds.contains(p.id)).take(10)) LinkCandidate(post: p)];
     state = LinkOffer(link: link, candidates: [...ranked, ...rest], fromShareSheet: true);
-  }
-
-  PostLink? _anyUrl(String text) {
-    final match = RegExp(r'https?://\S+').firstMatch(text);
-    final uri = match == null ? null : Uri.tryParse(match.group(0)!);
-    return uri == null ? null : PostLink(app: SocialApp.other, url: uri);
+    return true;
   }
 
   Future<void> accept(LinkCandidate candidate) async {

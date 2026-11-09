@@ -30,13 +30,12 @@ class NativeShare {
   NativeShare({MethodChannel? channel}) : _channel = channel ?? const MethodChannel('com.vecvel.postcrate/share');
 
   final MethodChannel _channel;
-  void Function(String text)? _onIncomingText;
 
-  /// Receives text shared into Postcrate while it is running (Android).
-  set onIncomingText(void Function(String text)? handler) {
-    _onIncomingText = handler;
+  /// Called when something new is shared into Postcrate while it runs
+  /// (Android). iOS items are picked up when the app comes to the front.
+  set onIncoming(void Function()? handler) {
     _channel.setMethodCallHandler((call) async {
-      if (call.method == 'onIncomingText' && call.arguments is String) _onIncomingText?.call(call.arguments as String);
+      if (call.method == 'onIncoming') handler?.call();
     });
   }
 
@@ -84,6 +83,35 @@ class NativeShare {
   Future<bool> openUrl(Uri url, {bool preferApp = true}) async =>
       await _channel.invokeMethod<bool>('openUrl', {'url': url.toString(), 'preferApp': preferApp}) ?? false;
 
-  /// Text that launched the app through the share sheet (Android), once.
-  Future<String?> takeIncomingText() => _channel.invokeMethod<String>('takeIncomingText');
+  /// Items shared into Postcrate that haven't been saved or discarded yet,
+  /// oldest first.
+  Future<List<IncomingItem>> incomingItems() async {
+    final raw = await _channel.invokeListMethod<Object?>('incomingItems') ?? const [];
+    return [for (final m in raw.whereType<Map<Object?, Object?>>()) IncomingItem.fromMap(m)];
+  }
+
+  /// Deletes a shared item and its copied files.
+  Future<void> removeIncoming(String id) => _channel.invokeMethod<void>('removeIncoming', {'id': id});
+}
+
+/// Text and files shared into Postcrate from another app.
+class IncomingItem {
+  const IncomingItem({required this.id, this.text, this.files = const []});
+
+  factory IncomingItem.fromMap(Map<Object?, Object?> m) => IncomingItem(
+    id: m['id']! as String,
+    text: m['text'] as String?,
+    files: [
+      for (final f in (m['files'] as List?)?.whereType<Map<Object?, Object?>>() ?? const <Map<Object?, Object?>>[])
+        NativeShareFile(
+          path: f['path']! as String,
+          name: f['name'] as String? ?? '',
+          mimeType: f['mimeType'] as String? ?? 'application/octet-stream',
+        ),
+    ],
+  );
+
+  final String id;
+  final String? text;
+  final List<NativeShareFile> files;
 }

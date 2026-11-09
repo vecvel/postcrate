@@ -52,6 +52,7 @@ There are no accounts and no servers. Everything stays on your phone, and backup
 
 - **Every post field in one editor.** Title, text, thread parts, photos, videos, audio and documents, link preview, poll, hashtags and mentions, location, language, content warning, first comment, per-app text with character limits, collections, status, pinning and private notes.
 - **Share to any app.** Uses the native share sheet on iOS and Android. The caption is copied to the clipboard first, because Facebook and Instagram drop pre-filled text. Text-only posts can open X, Threads, Bluesky, LinkedIn, WhatsApp, Telegram, Reddit and Tumblr composers directly.
+- **Save to Postcrate.** Share photos, videos, audio, documents, links or text from any app into Postcrate to start a new post or add to an existing one.
 - **Where it went.** Each share is recorded. Copy the post link in the other app (or share it into Postcrate on Android) and Postcrate attaches it, so you can open the live post from your library.
 - **Media details.** Codec, resolution, duration, frame rate, bitrate, audio format, color and page count for every attachment, with video and PDF previews and a cover frame picker. Videos are checked against the length and size limits of the apps a post is going to, including whether they post as a Short or Reel.
 - **Reminders.** Set a time to post and get a notification.

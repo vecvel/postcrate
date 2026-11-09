@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.0.2]
+
+### Added
+
+- Save to Postcrate from other apps' share sheets: photos, videos, audio, documents, links and text become a new post or are added to an existing one. iOS gets a share extension; Android accepts files as well as text.
+
+### Changed
+
+- A post link shared into Postcrate is offered for attaching only while a recent share is waiting for one; otherwise it is saved like any other link.
+
+## [1.0.1]
+
+### Fixed
+
+- Removed the empty space at the bottom of the post editor.
+- The apps a post is planned for now sit in one row that scrolls sideways.
+
 ## [1.0.0]
 
 ### Added

@@ -4,12 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/widgets/widgets.dart';
+import '../../features/share/incoming_share.dart';
 import '../../features/share/link_capture.dart';
+import '../../features/share/native/native_share.dart';
+import '../../features/share/presentation/incoming_sheet.dart';
 import '../../features/share/presentation/link_offer_sheet.dart';
 
 /// Phone layout: bottom bar with Library, Home (center, default) and Backup.
-/// Also hosts post-link capture, so a copied or shared-in link can be
-/// attached from any tab.
+/// Also hosts post-link capture and "Save to Postcrate", so anything copied
+/// or shared in is handled from any tab.
 class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key, required this.shell});
 
@@ -29,13 +32,19 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => ref.read(linkCaptureProvider.notifier).start());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(linkCaptureProvider.notifier).start();
+      ref.read(incomingShareProvider.notifier).start();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     ref.listen<LinkOffer?>(linkCaptureProvider, (_, offer) {
       if (offer != null) showLinkOfferSheet(context, ref, offer);
+    });
+    ref.listen<IncomingItem?>(incomingShareProvider, (_, item) {
+      if (item != null) showIncomingSheet(context, ref, item);
     });
     final shell = widget.shell;
     return Scaffold(

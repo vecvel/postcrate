@@ -13,6 +13,8 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.os.PersistableBundle
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -23,6 +25,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 import java.io.File
+import java.util.concurrent.Executors
 
 /**
  * Sharing on "com.vecvel.postcrate/share". The caption also goes to the
@@ -50,7 +53,9 @@ class PostcrateSharePlugin :
 
   private var pendingResult: MethodChannel.Result? = null
   private var chosenTarget: String? = null
-  private var incomingText: String? = null
+  private lateinit var inbox: IncomingInbox
+  private val worker = Executors.newSingleThreadExecutor()
+  private val main = Handler(Looper.getMainLooper())
 
   private val chosenReceiver = object : BroadcastReceiver() {
     override fun onReceive(ctx: Context, intent: Intent) {
@@ -69,6 +74,7 @@ class PostcrateSharePlugin :
     context = flutter.applicationContext
     channel = MethodChannel(flutter.binaryMessenger, CHANNEL)
     channel.setMethodCallHandler(this)
+    inbox = IncomingInbox(context)
     ContextCompat.registerReceiver(context, chosenReceiver, IntentFilter(ACTION_CHOSEN), ContextCompat.RECEIVER_NOT_EXPORTED)
   }
 
@@ -97,20 +103,21 @@ class PostcrateSharePlugin :
   }
 
   override fun onNewIntent(intent: Intent): Boolean {
-    val text = textFrom(intent) ?: return false
-    channel.invokeMethod("onIncomingText", text)
+    if (!inbox.accepts(intent)) return false
+    captureIncoming(intent)
     return true
   }
 
+  /** Saves a shared item to the inbox, then tells Dart to read it. */
   private fun captureIncoming(intent: Intent?) {
-    incomingText = textFrom(intent)
-    // Consume it so a config change doesn't deliver the same link twice.
-    if (incomingText != null) intent?.action = Intent.ACTION_MAIN
-  }
-
-  private fun textFrom(intent: Intent?): String? {
-    if (intent?.action != Intent.ACTION_SEND || intent.type?.startsWith("text/") != true) return null
-    return intent.getStringExtra(Intent.EXTRA_TEXT)?.takeIf { it.isNotBlank() }
+    if (intent == null || !inbox.accepts(intent)) return
+    val copy = Intent(intent)
+    // Consume it so a config change doesn't save the same item twice.
+    intent.action = Intent.ACTION_MAIN
+    worker.execute {
+      val saved = runCatching { inbox.save(copy) }.getOrDefault(false)
+      if (saved) main.post { channel.invokeMethod("onIncoming", null) }
+    }
   }
 
   // Method calls ------------------------------------------------------------------
@@ -120,9 +127,13 @@ class PostcrateSharePlugin :
       "share" -> share(call, result)
       "installedApps" -> result.success(installedApps(call.argument<Map<String, List<String>>>("packages").orEmpty()))
       "openUrl" -> result.success(openUrl(call.argument<String>("url")))
-      "takeIncomingText" -> {
-        result.success(incomingText)
-        incomingText = null
+      "incomingItems" -> worker.execute {
+        val items = inbox.items()
+        main.post { result.success(items) }
+      }
+      "removeIncoming" -> {
+        inbox.remove(call.argument<String>("id").orEmpty())
+        result.success(null)
       }
       else -> result.notImplemented()
     }

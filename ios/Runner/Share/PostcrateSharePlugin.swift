@@ -19,8 +19,13 @@ final class PostcrateSharePlugin: NSObject, FlutterPlugin {
       result(installedApps(args["schemes"] as? [String: String] ?? [:]))
     case "openUrl":
       openUrl(args, result: result)
-    case "takeIncomingText":
-      // iOS receives links through a share extension (not built yet).
+    case "incomingItems":
+      DispatchQueue.global(qos: .userInitiated).async {
+        let items = PostcrateInbox.items()
+        DispatchQueue.main.async { result(items) }
+      }
+    case "removeIncoming":
+      PostcrateInbox.remove(args["id"] as? String ?? "")
       result(nil)
     default:
       result(FlutterMethodNotImplemented)
