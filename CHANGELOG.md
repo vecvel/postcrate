@@ -4,6 +4,18 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.0.3]
+
+### Changed
+
+- New icon set drawn for Postcrate, replacing the Cupertino icons everywhere.
+- Own loading spinner and cover-frame slider in place of the Cupertino ones.
+- The tab bar has no background: tab pages fade out toward the bottom behind it, and under the status bar at the top.
+
+### Removed
+
+- The `cupertino_icons` dependency.
+
 ## [1.0.2]
 
 ### Added

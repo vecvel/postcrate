@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers.dart';
@@ -105,12 +106,12 @@ class _CollectionsBody extends ConsumerWidget {
                 PcRow(
                   title: c.name,
                   subtitle: '${posts.where((p) => p.collectionIds.contains(c.id)).length} posts',
-                  leading: const PcIconTile(icon: CupertinoIcons.folder),
+                  leading: const PcIconTile(icon: PcIcons.folder),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       PcIconButton(
-                        icon: CupertinoIcons.pencil,
+                        icon: PcIcons.pencil,
                         label: 'Rename ${c.name}',
                         onTap: () async {
                           final name = await _promptName(
@@ -128,7 +129,7 @@ class _CollectionsBody extends ConsumerWidget {
                         },
                       ),
                       PcIconButton(
-                        icon: CupertinoIcons.trash,
+                        icon: PcIcons.trash,
                         label: 'Delete ${c.name}',
                         color: context.pc.danger,
                         onTap: () async {
@@ -154,7 +155,7 @@ class _CollectionsBody extends ConsumerWidget {
         const SizedBox(height: PcSpace.md),
         PcButton.secondary(
           label: 'New collection',
-          icon: CupertinoIcons.plus,
+          icon: PcIcons.plus,
           expand: true,
           onPressed: () => promptNewCollection(context, ref),
         ),

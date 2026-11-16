@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -66,7 +66,7 @@ Future<void> showPostActions(BuildContext context, WidgetRef ref, Post post) asy
       children: [
         PcRow(
           title: 'Share',
-          leading: const PcIconTile(icon: CupertinoIcons.share),
+          leading: const PcIconTile(icon: PcIcons.share),
           onTap: () {
             Navigator.of(ctx).pop();
             sharePost(context, ref, post);
@@ -74,7 +74,7 @@ Future<void> showPostActions(BuildContext context, WidgetRef ref, Post post) asy
         ),
         PcRow(
           title: 'Edit',
-          leading: const PcIconTile(icon: CupertinoIcons.pencil),
+          leading: const PcIconTile(icon: PcIcons.pencil),
           onTap: () {
             Navigator.of(ctx).pop();
             context.push(Routes.post(post.id));
@@ -82,7 +82,7 @@ Future<void> showPostActions(BuildContext context, WidgetRef ref, Post post) asy
         ),
         PcRow(
           title: 'Duplicate',
-          leading: const PcIconTile(icon: CupertinoIcons.doc_on_doc),
+          leading: const PcIconTile(icon: PcIcons.copy),
           onTap: () async {
             Navigator.of(ctx).pop();
             await repo.duplicate(post);
@@ -91,7 +91,7 @@ Future<void> showPostActions(BuildContext context, WidgetRef ref, Post post) asy
         ),
         PcRow(
           title: post.pinned ? 'Unpin' : 'Pin',
-          leading: const PcIconTile(icon: CupertinoIcons.pin),
+          leading: const PcIconTile(icon: PcIcons.pin),
           onTap: () async {
             Navigator.of(ctx).pop();
             await repo.save(post.copyWith(pinned: !post.pinned, updatedAt: DateTime.now()));
@@ -99,7 +99,7 @@ Future<void> showPostActions(BuildContext context, WidgetRef ref, Post post) asy
         ),
         PcRow(
           title: post.status == PostStatus.archived ? 'Move to drafts' : 'Archive',
-          leading: const PcIconTile(icon: CupertinoIcons.archivebox),
+          leading: const PcIconTile(icon: PcIcons.archive),
           onTap: () async {
             Navigator.of(ctx).pop();
             final next = post.status == PostStatus.archived ? PostStatus.draft : PostStatus.archived;
@@ -109,7 +109,7 @@ Future<void> showPostActions(BuildContext context, WidgetRef ref, Post post) asy
         PcRow(
           title: 'Delete',
           titleColor: ctx.pc.danger,
-          leading: PcIconTile(icon: CupertinoIcons.trash, color: ctx.pc.danger),
+          leading: PcIconTile(icon: PcIcons.trash, color: ctx.pc.danger),
           onTap: () {
             Navigator.of(ctx).pop();
             confirmDeletePost(context, ref, post);

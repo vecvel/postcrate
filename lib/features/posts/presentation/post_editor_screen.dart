@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -228,18 +227,18 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
         children: [
           PcRow(
             title: 'Photos and videos',
-            leading: const PcIconTile(icon: CupertinoIcons.photo_on_rectangle),
+            leading: const PcIconTile(icon: PcIcons.photos),
             onTap: () => Navigator.of(ctx).pop('gallery'),
           ),
           PcRow(
             title: 'Take photo',
-            leading: const PcIconTile(icon: CupertinoIcons.camera),
+            leading: const PcIconTile(icon: PcIcons.camera),
             onTap: () => Navigator.of(ctx).pop('camera'),
           ),
           PcRow(
             title: 'Files',
             subtitle: 'Audio, PDF, DOCX, PPTX, TXT and more',
-            leading: const PcIconTile(icon: CupertinoIcons.folder),
+            leading: const PcIconTile(icon: PcIcons.folder),
             onTap: () => Navigator.of(ctx).pop('files'),
           ),
         ],
@@ -354,7 +353,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
               ),
               Expanded(
                 child: base == null
-                    ? const Center(child: CupertinoActivityIndicator())
+                    ? const Center(child: PcSpinner(size: 24))
                     : ListView(
                         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                         padding: EdgeInsets.fromLTRB(
@@ -447,7 +446,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
                     ),
                   ),
                   PcIconButton(
-                    icon: CupertinoIcons.minus_circle,
+                    icon: PcIcons.minusCircle,
                     label: 'Remove part ${i + 2}',
                     color: context.pc.textTertiary,
                     onTap: () => setState(() => _thread.removeAt(i).dispose()),
@@ -460,7 +459,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
               alignment: Alignment.centerLeft,
               child: PcButton.secondary(
                 label: _thread.isEmpty ? 'Add thread part' : 'Add another part',
-                icon: CupertinoIcons.plus,
+                icon: PcIcons.plus,
                 compact: true,
                 onPressed: () => setState(() => _thread.add(TextEditingController())),
               ),
@@ -498,7 +497,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
             alignment: Alignment.centerLeft,
             child: PcButton.secondary(
               label: 'Add media',
-              icon: CupertinoIcons.plus,
+              icon: PcIcons.plus,
               compact: true,
               loading: _importing,
               onPressed: _addMedia,
@@ -520,7 +519,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
             hint: 'https://example.com/changelog',
             keyboardType: TextInputType.url,
             textCapitalization: TextCapitalization.none,
-            prefixIcon: CupertinoIcons.link,
+            prefixIcon: PcIcons.link,
             onChanged: (_) => setState(() {}),
           ),
           if (_linkUrl.text.trim().isNotEmpty) ...[
@@ -538,7 +537,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
               alignment: Alignment.centerLeft,
               child: PcButton.secondary(
                 label: 'Fill from the page',
-                icon: CupertinoIcons.arrow_down_doc,
+                icon: PcIcons.downloadDoc,
                 compact: true,
                 loading: _fetchingPreview,
                 onPressed: _fetchPreview,
@@ -594,7 +593,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
                   ),
                   if (_pollOptions.length > 2)
                     PcIconButton(
-                      icon: CupertinoIcons.minus_circle,
+                      icon: PcIcons.minusCircle,
                       label: 'Remove option ${i + 1}',
                       color: context.pc.textTertiary,
                       onTap: () => setState(() => _pollOptions.removeAt(i).dispose()),
@@ -608,7 +607,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
                 alignment: Alignment.centerLeft,
                 child: PcButton.secondary(
                   label: 'Add option',
-                  icon: CupertinoIcons.plus,
+                  icon: PcIcons.plus,
                   compact: true,
                   onPressed: () => setState(() => _pollOptions.add(TextEditingController())),
                 ),
@@ -636,7 +635,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
           PcTextField(
             controller: _place,
             hint: 'Lisbon',
-            prefixIcon: CupertinoIcons.location,
+            prefixIcon: PcIcons.location,
             onChanged: (_) => setState(() {}),
           ),
           _label('First comment'),
@@ -665,7 +664,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
       children: [
         PcRow(
           title: 'Language',
-          leading: const PcIconTile(icon: CupertinoIcons.globe),
+          leading: const PcIconTile(icon: PcIcons.globe),
           trailing: Text(languageLabel(_language), style: context.text.bodyMedium),
           onTap: () async {
             final picked = await pickLanguage(context, _language);
@@ -675,7 +674,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
         PcRow(
           title: 'Reminder',
           subtitle: _reminderAt == null ? null : 'You get a notification then',
-          leading: const PcIconTile(icon: CupertinoIcons.bell),
+          leading: const PcIconTile(icon: PcIcons.bell),
           trailing: Text(_reminderAt == null ? 'Off' : dateTimeLabel(_reminderAt!), style: context.text.bodyMedium),
           onTap: () async {
             final picked = await pickReminder(context, _reminderAt);
@@ -717,12 +716,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: PcSpace.cardPadding),
-              child: PcButton(
-                label: 'Share to any app',
-                icon: CupertinoIcons.share,
-                expand: true,
-                onPressed: () => _share(),
-              ),
+              child: PcButton(label: 'Share to any app', icon: PcIcons.share, expand: true, onPressed: () => _share()),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: PcSpace.cardPadding),
@@ -818,7 +812,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
             PcRow(
               title: label,
               subtitle: value.split('\n').first,
-              trailing: Icon(CupertinoIcons.doc_on_clipboard, size: 18, color: context.pc.textTertiary),
+              trailing: PcIcon(PcIcons.clipboard, size: 18, color: context.pc.textTertiary),
               onTap: () async {
                 await ref.read(shareServiceProvider).copy(value);
                 if (context.mounted) showPcToast(context, '$label copied');
@@ -859,7 +853,7 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
                   ),
                 PcChip(
                   label: 'New',
-                  icon: CupertinoIcons.plus,
+                  icon: PcIcons.plus,
                   onTap: () async {
                     final created = await promptNewCollection(context, ref);
                     if (created != null) setState(() => _collectionIds.add(created.id));
@@ -908,10 +902,10 @@ class _PostEditorScreenState extends ConsumerState<PostEditorScreen> {
             PcRow(
               title: s.target,
               subtitle: s.liveUrl ?? '${dateTimeLabel(s.sharedAt)} · add the post link',
-              leading: const PcIconTile(icon: CupertinoIcons.paperplane),
+              leading: const PcIconTile(icon: PcIcons.send),
               onTap: s.liveUrl == null ? () => _editLink(s) : () => openPostLink(context, ref, s.liveUrl!),
               trailing: PcIconButton(
-                icon: s.liveUrl == null ? CupertinoIcons.link : CupertinoIcons.pencil,
+                icon: s.liveUrl == null ? PcIcons.link : PcIcons.pencil,
                 label: s.liveUrl == null ? 'Add link' : 'Edit link',
                 color: context.pc.textTertiary,
                 onTap: () => _editLink(s),

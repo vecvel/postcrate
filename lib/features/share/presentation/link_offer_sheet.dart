@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/pc_tokens.dart';
@@ -47,7 +47,7 @@ Future<void> showLinkOfferSheet(BuildContext context, WidgetRef ref, LinkOffer o
                   subtitle: c.share == null
                       ? 'Edited ${dateTimeLabel(c.post.updatedAt)}'
                       : '${c.share!.target} · ${dateTimeLabel(c.share!.sharedAt)}',
-                  trailing: Icon(CupertinoIcons.chevron_right, size: 16, color: ctx.pc.textTertiary),
+                  trailing: PcIcon(PcIcons.chevronRight, size: 16, color: ctx.pc.textTertiary),
                   onTap: () => Navigator.of(ctx).pop(c),
                 ),
             ],

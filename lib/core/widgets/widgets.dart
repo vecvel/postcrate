@@ -5,3 +5,5 @@ export 'pc_layout.dart';
 export 'pc_mark.dart';
 export 'pc_surface.dart';
 export 'pc_tap.dart';
+export 'pc_icons.dart';
+export 'pc_progress.dart';

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -59,7 +59,7 @@ Future<void> showIncomingSheet(BuildContext context, WidgetRef ref, IncomingItem
         const SizedBox(height: PcSpace.md),
         PcButton(
           label: 'New post',
-          icon: CupertinoIcons.plus,
+          icon: PcIcons.plus,
           expand: true,
           onPressed: () => Navigator.of(ctx).pop(const _NewPost()),
         ),
@@ -71,7 +71,7 @@ Future<void> showIncomingSheet(BuildContext context, WidgetRef ref, IncomingItem
                 PcRow(
                   title: p.preview,
                   subtitle: 'Edited ${dateTimeLabel(p.updatedAt)}',
-                  trailing: Icon(CupertinoIcons.chevron_right, size: 16, color: ctx.pc.textTertiary),
+                  trailing: PcIcon(PcIcons.chevronRight, size: 16, color: ctx.pc.textTertiary),
                   onTap: () => Navigator.of(ctx).pop(_Existing(p)),
                 ),
             ],

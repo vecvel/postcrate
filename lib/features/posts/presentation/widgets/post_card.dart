@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -54,7 +54,7 @@ class PostCard extends ConsumerWidget {
               ),
               if (post.pinned) ...[
                 const SizedBox(width: 8),
-                Icon(CupertinoIcons.pin, size: 16, color: c.textTertiary, semanticLabel: 'Pinned'),
+                PcIcon(PcIcons.pin, size: 16, color: c.textTertiary, semanticLabel: 'Pinned'),
               ],
             ],
           ),
@@ -109,7 +109,7 @@ class _SharedOn extends ConsumerWidget {
         for (final s in byTarget.values)
           PcChip(
             label: s.target,
-            icon: s.liveUrl == null ? CupertinoIcons.paperplane : CupertinoIcons.arrow_up_right,
+            icon: s.liveUrl == null ? PcIcons.send : PcIcons.arrowUpRight,
             onTap: s.liveUrl == null ? null : () => openPostLink(context, ref, s.liveUrl!),
           ),
       ],

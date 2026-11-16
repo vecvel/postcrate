@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/pc_tokens.dart';
 import 'pc_card.dart';
 import 'pc_controls.dart';
 import 'pc_mark.dart';
+import 'pc_icons.dart';
 
 /// Minimal page header: page context only.
 class PcHeader extends StatelessWidget {
@@ -44,7 +44,7 @@ class PcNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final leading = leadingLabel == null
         ? PcIconButton(
-            icon: CupertinoIcons.chevron_back,
+            icon: PcIcons.chevronLeft,
             label: 'Back',
             onTap: onLeading ?? () => Navigator.of(context).maybePop(),
           )
@@ -205,7 +205,7 @@ class PcEmptyState extends StatelessWidget {
   final String body;
   final String? actionLabel;
   final VoidCallback? onAction;
-  final IconData? icon;
+  final PcIconData? icon;
 
   @override
   Widget build(BuildContext context) {

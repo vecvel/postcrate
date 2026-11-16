@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers.dart';
@@ -113,7 +113,7 @@ class _AttachmentBodyState extends ConsumerState<_AttachmentBody> {
               children: [
                 Expanded(child: Text('Cover frame', style: context.text.labelMedium)),
                 if (_renderingFrame)
-                  const CupertinoActivityIndicator(radius: 7)
+                  const PcSpinner(size: 14)
                 else
                   Text(
                     durationLabel((_frameMs ?? (a.coverFrameMs ?? 0).toDouble()).round()),
@@ -124,11 +124,11 @@ class _AttachmentBodyState extends ConsumerState<_AttachmentBody> {
           ),
           SizedBox(
             width: double.infinity,
-            child: CupertinoSlider(
+            child: PcSlider(
               value: (_frameMs ?? (a.coverFrameMs ?? 0).toDouble()).clamp(0, duration.toDouble()),
               max: duration.toDouble(),
-              activeColor: c.textPrimary,
-              thumbColor: c.card,
+              semanticLabel: 'Cover frame',
+              semanticValue: durationLabel((_frameMs ?? (a.coverFrameMs ?? 0).toDouble()).round()),
               onChanged: (v) => setState(() => _frameMs = v),
               onChangeEnd: _setCover,
             ),
@@ -169,11 +169,11 @@ class _AttachmentBodyState extends ConsumerState<_AttachmentBody> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
+                      PcIcon(
                         switch (n.level) {
-                          FitLevel.ok => CupertinoIcons.checkmark_circle,
-                          FitLevel.info => CupertinoIcons.info_circle,
-                          FitLevel.warning => CupertinoIcons.exclamationmark_circle,
+                          FitLevel.ok => PcIcons.checkCircle,
+                          FitLevel.info => PcIcons.info,
+                          FitLevel.warning => PcIcons.alert,
                         },
                         size: 18,
                         color: switch (n.level) {
@@ -203,7 +203,7 @@ class _AttachmentBodyState extends ConsumerState<_AttachmentBody> {
             Expanded(
               child: PcButton.secondary(
                 label: 'Move earlier',
-                icon: CupertinoIcons.arrow_left,
+                icon: PcIcons.arrowLeft,
                 onPressed: widget.index == 0 ? null : () => Navigator.of(context).pop(const AttachmentMove(-1)),
               ),
             ),
@@ -211,7 +211,7 @@ class _AttachmentBodyState extends ConsumerState<_AttachmentBody> {
             Expanded(
               child: PcButton.secondary(
                 label: 'Move later',
-                icon: CupertinoIcons.arrow_right,
+                icon: PcIcons.arrowRight,
                 onPressed: widget.index >= widget.count - 1
                     ? null
                     : () => Navigator.of(context).pop(const AttachmentMove(1)),
@@ -222,7 +222,7 @@ class _AttachmentBodyState extends ConsumerState<_AttachmentBody> {
         const SizedBox(height: PcSpace.xs),
         PcButton.secondary(
           label: 'Remove from post',
-          icon: CupertinoIcons.trash,
+          icon: PcIcons.trash,
           expand: true,
           onPressed: () => Navigator.of(context).pop(const AttachmentRemove()),
         ),

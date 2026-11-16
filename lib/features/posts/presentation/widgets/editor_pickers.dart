@@ -36,9 +36,7 @@ Future<String?> pickLanguage(BuildContext context, String? current) {
         for (final e in [const MapEntry('', 'Not set'), ..._languages.entries])
           PcRow(
             title: e.value,
-            trailing: (current ?? '') == e.key
-                ? Icon(CupertinoIcons.checkmark, size: 18, color: ctx.pc.textPrimary)
-                : null,
+            trailing: (current ?? '') == e.key ? PcIcon(PcIcons.check, size: 18, color: ctx.pc.textPrimary) : null,
             onTap: () => Navigator.of(ctx).pop(e.key),
           ),
       ],

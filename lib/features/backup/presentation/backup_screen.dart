@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,10 +29,12 @@ class BackupScreen extends ConsumerWidget {
     final c = context.pc;
 
     return Scaffold(
+      // Scrolls under the status bar, where the shell fades it out.
       body: SafeArea(
+        top: false,
         bottom: false,
         child: ListView(
-          padding: EdgeInsets.only(bottom: PcBottomBar.contentInset(context)),
+          padding: EdgeInsets.only(top: PcEdgeFade.topContentInset(context), bottom: PcBottomBar.contentInset(context)),
           children: [
             const PcHeader(title: 'Backup'),
             Padding(
@@ -46,7 +47,7 @@ class BackupScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const PcIconTile(icon: CupertinoIcons.archivebox, size: 40),
+                        const PcIconTile(icon: PcIcons.archive, size: 40),
                         const SizedBox(height: PcSpace.sm),
                         Text('Back up to a file', style: context.text.titleMedium),
                         const SizedBox(height: 4),
@@ -73,7 +74,7 @@ class BackupScreen extends ConsumerWidget {
                         Builder(
                           builder: (buttonContext) => PcButton(
                             label: s.busy && s.progress != null ? s.progress! : 'Create backup',
-                            icon: CupertinoIcons.arrow_down_doc,
+                            icon: PcIcons.downloadDoc,
                             expand: true,
                             loading: s.busy,
                             onPressed: posts.isEmpty ? null : () => _backUp(buttonContext, ref),
@@ -95,7 +96,7 @@ class BackupScreen extends ConsumerWidget {
                         const SizedBox(height: PcSpace.md),
                         PcButton.secondary(
                           label: 'Choose backup file',
-                          icon: CupertinoIcons.folder,
+                          icon: PcIcons.folder,
                           expand: true,
                           onPressed: s.busy ? null : () => _restore(context, ref),
                         ),
@@ -260,8 +261,8 @@ class _RestoreBodyState extends ConsumerState<_RestoreBody> {
     );
   }
 
-  Widget _check(BuildContext context, bool on) => Icon(
-    on ? CupertinoIcons.checkmark_circle : CupertinoIcons.circle,
+  Widget _check(BuildContext context, bool on) => PcIcon(
+    on ? PcIcons.checkCircle : PcIcons.circle,
     size: 22,
     color: on ? context.pc.textPrimary : context.pc.textTertiary,
   );

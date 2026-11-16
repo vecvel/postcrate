@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -73,21 +72,24 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     if (_collectionId != null && !collections.any((c) => c.id == _collectionId)) _collectionId = null;
 
     return Scaffold(
+      // Scrolls under the status bar, where the shell fades it out.
       body: SafeArea(
+        top: false,
         bottom: false,
         child: CustomScrollView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           slivers: [
+            SliverToBoxAdapter(child: SizedBox(height: PcEdgeFade.topContentInset(context))),
             SliverToBoxAdapter(
               child: PcHeader(
                 title: 'Library',
                 actions: [
                   PcIconButton(
-                    icon: CupertinoIcons.folder,
+                    icon: PcIcons.folder,
                     label: 'Collections',
                     onTap: () => showCollectionsSheet(context, ref),
                   ),
-                  PcIconButton(icon: CupertinoIcons.plus, label: 'New post', onTap: () => context.push(Routes.newPost)),
+                  PcIconButton(icon: PcIcons.plus, label: 'New post', onTap: () => context.push(Routes.newPost)),
                 ],
               ),
             ),
@@ -97,7 +99,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 child: PcTextField(
                   controller: _search,
                   hint: 'Search posts',
-                  prefixIcon: CupertinoIcons.search,
+                  prefixIcon: PcIcons.search,
                   textInputAction: TextInputAction.search,
                   onChanged: (_) => setState(() {}),
                 ),
@@ -117,7 +119,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     for (final c in collections) ...[
                       PcChip(
                         label: c.name,
-                        icon: CupertinoIcons.folder,
+                        icon: PcIcons.folder,
                         selected: _collectionId == c.id,
                         onTap: () => setState(() => _collectionId = _collectionId == c.id ? null : c.id),
                       ),
@@ -164,12 +166,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           sliver: SliverToBoxAdapter(
             child: filtered
                 ? const PcEmptyState(
-                    icon: CupertinoIcons.search,
+                    icon: PcIcons.search,
                     title: 'No matching posts',
                     body: 'Try another word or filter.',
                   )
                 : PcEmptyState(
-                    icon: CupertinoIcons.square_pencil,
+                    icon: PcIcons.compose,
                     title: 'Your library is empty',
                     body: 'Every post you write lands here, grouped by the day you made it.',
                     actionLabel: 'New post',

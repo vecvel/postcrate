@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,16 +20,19 @@ class HomeScreen extends ConsumerWidget {
     final backup = ref.watch(backupControllerProvider);
 
     return Scaffold(
+      // Scrolls under the status bar, where the shell fades it out.
       body: SafeArea(
+        top: false,
         bottom: false,
         child: CustomScrollView(
           slivers: [
+            SliverToBoxAdapter(child: SizedBox(height: PcEdgeFade.topContentInset(context))),
             SliverToBoxAdapter(
               child: PcHeader(
                 title: 'Postcrate',
                 showMark: true,
                 actions: [
-                  PcIconButton(icon: CupertinoIcons.plus, label: 'New post', onTap: () => context.push(Routes.newPost)),
+                  PcIconButton(icon: PcIcons.plus, label: 'New post', onTap: () => context.push(Routes.newPost)),
                 ],
               ),
             ),
@@ -94,8 +96,8 @@ class HomeScreen extends ConsumerWidget {
               PcRow(
                 title: label,
                 titleColor: done ? context.pc.textTertiary : null,
-                leading: Icon(
-                  done ? CupertinoIcons.checkmark_circle : CupertinoIcons.circle,
+                leading: PcIcon(
+                  done ? PcIcons.checkCircle : PcIcons.circle,
                   size: 22,
                   color: done ? context.pc.success : context.pc.textTertiary,
                   semanticLabel: done ? 'Done' : 'Not done',
@@ -113,7 +115,7 @@ class HomeScreen extends ConsumerWidget {
               PcRow(
                 title: p.preview,
                 subtitle: dateTimeLabel(p.reminderAt!),
-                leading: const PcIconTile(icon: CupertinoIcons.bell),
+                leading: const PcIconTile(icon: PcIcons.bell),
                 onTap: () => context.push(Routes.post(p.id)),
               ),
           ],
@@ -138,7 +140,7 @@ class HomeScreen extends ConsumerWidget {
       ),
       if (recent.isEmpty)
         PcEmptyState(
-          icon: CupertinoIcons.square_pencil,
+          icon: PcIcons.compose,
           title: 'Start your first post',
           body: 'Write once, keep it here, and share it to any app on your phone.',
           actionLabel: 'New post',

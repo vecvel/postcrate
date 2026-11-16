@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,9 +18,9 @@ class AppShell extends ConsumerStatefulWidget {
   final StatefulNavigationShell shell;
 
   static const items = [
-    PcBarItem(icon: CupertinoIcons.square_grid_2x2, label: 'Library'),
-    PcBarItem(icon: CupertinoIcons.house, label: 'Home'),
-    PcBarItem(icon: CupertinoIcons.cloud_upload, label: 'Backup'),
+    PcBarItem(icon: PcIcons.library, label: 'Library'),
+    PcBarItem(icon: PcIcons.home, label: 'Home'),
+    PcBarItem(icon: PcIcons.backup, label: 'Backup'),
   ];
 
   @override
@@ -50,7 +49,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     return Scaffold(
       extendBody: true,
       resizeToAvoidBottomInset: false,
-      body: shell,
+      body: PcEdgeFade(child: shell),
       bottomNavigationBar: PcBottomBar(
         items: AppShell.items,
         index: shell.currentIndex,

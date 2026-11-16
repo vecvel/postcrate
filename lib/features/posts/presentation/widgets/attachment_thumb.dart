@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart' show Colors;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,11 +8,11 @@ import '../../../../core/utils/formatting.dart';
 import '../../../../core/widgets/widgets.dart';
 import '../../domain/post.dart';
 
-IconData attachmentIcon(AttachmentKind kind) => switch (kind) {
-  AttachmentKind.image => CupertinoIcons.photo,
-  AttachmentKind.video => CupertinoIcons.film,
-  AttachmentKind.audio => CupertinoIcons.music_note,
-  AttachmentKind.document => CupertinoIcons.doc_text,
+PcIconData attachmentIcon(AttachmentKind kind) => switch (kind) {
+  AttachmentKind.image => PcIcons.photo,
+  AttachmentKind.video => PcIcons.video,
+  AttachmentKind.audio => PcIcons.audio,
+  AttachmentKind.document => PcIcons.doc,
 };
 
 /// Square preview of an attachment: the image itself, a video frame or PDF
@@ -66,7 +66,7 @@ class _AttachmentThumbState extends ConsumerState<AttachmentThumb> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(attachmentIcon(a.kind), size: size * 0.32, color: c.textPrimary),
+          PcIcon(attachmentIcon(a.kind), size: size * 0.32, color: c.textPrimary),
           if (size >= 48) ...[
             const SizedBox(height: 3),
             Text(a.extension, style: context.text.labelSmall!.copyWith(color: c.textSecondary)),

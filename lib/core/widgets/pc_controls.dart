@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/pc_tokens.dart';
 import 'pc_card.dart';
 import 'pc_surface.dart';
 import 'pc_tap.dart';
+import 'pc_icons.dart';
+import 'pc_progress.dart';
 
 enum PcButtonVariant { primary, secondary, danger, plain }
 
@@ -45,7 +46,7 @@ class PcButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final PcButtonVariant variant;
-  final IconData? icon;
+  final PcIconData? icon;
   final bool loading;
   final bool expand;
   final bool compact;
@@ -67,9 +68,9 @@ class PcButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (loading)
-          SizedBox.square(dimension: 16, child: CupertinoActivityIndicator(color: fg, radius: 8))
+          PcSpinner(size: 16, color: fg)
         else if (icon != null)
-          Icon(icon, size: compact ? 16 : 18, color: fg),
+          PcIcon(icon!, size: compact ? 16 : 18, color: fg),
         if (loading || icon != null) const SizedBox(width: 6),
         Flexible(
           child: Text(label, style: style, overflow: TextOverflow.ellipsis),
@@ -100,7 +101,7 @@ class PcButton extends StatelessWidget {
 class PcIconButton extends StatelessWidget {
   const PcIconButton({super.key, required this.icon, required this.onTap, required this.label, this.color});
 
-  final IconData icon;
+  final PcIconData icon;
   final VoidCallback? onTap;
   final String label;
   final Color? color;
@@ -112,7 +113,7 @@ class PcIconButton extends StatelessWidget {
       semanticLabel: label,
       child: SizedBox.square(
         dimension: PcSize.touch,
-        child: Icon(icon, size: PcSize.navIcon, color: color ?? context.pc.textPrimary),
+        child: PcIcon(icon, size: PcSize.navIcon, color: color ?? context.pc.textPrimary),
       ),
     );
   }
@@ -147,7 +148,7 @@ class PcTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final bool autofocus;
-  final IconData? prefixIcon;
+  final PcIconData? prefixIcon;
   final FocusNode? focusNode;
   final TextCapitalization textCapitalization;
   final TextStyle? style;
@@ -176,7 +177,7 @@ class PcTextField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hint,
           fillColor: PcSurface.fieldColor(context),
-          prefixIcon: prefixIcon == null ? null : Icon(prefixIcon, size: 18, color: c.textTertiary),
+          prefixIcon: prefixIcon == null ? null : PcIcon(prefixIcon!, size: 18, color: c.textTertiary),
           prefixIconConstraints: const BoxConstraints(minWidth: 38, minHeight: 20),
         ),
       ),
@@ -242,7 +243,7 @@ class PcChip extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback? onTap;
-  final IconData? icon;
+  final PcIconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +262,7 @@ class PcChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (icon != null) ...[Icon(icon, size: 15, color: fg), const SizedBox(width: 5)],
+              if (icon != null) ...[PcIcon(icon!, size: 15, color: fg), const SizedBox(width: 5)],
               Text(label, style: context.text.bodyMedium!.copyWith(color: fg, fontSize: 14)),
             ],
           ),
@@ -333,7 +334,7 @@ class PcSegmented<T> extends StatelessWidget {
 class PcIconTile extends StatelessWidget {
   const PcIconTile({super.key, required this.icon, this.size = 32, this.color});
 
-  final IconData icon;
+  final PcIconData icon;
   final double size;
   final Color? color;
 
@@ -343,7 +344,7 @@ class PcIconTile extends StatelessWidget {
       width: size,
       height: size,
       decoration: pcShape(PcSurface.fieldColor(context), size * 0.28),
-      child: Icon(icon, size: size * 0.55, color: color ?? context.pc.textPrimary),
+      child: PcIcon(icon, size: size * 0.55, color: color ?? context.pc.textPrimary),
     );
   }
 }
