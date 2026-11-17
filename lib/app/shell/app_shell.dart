@@ -49,7 +49,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     return Scaffold(
       extendBody: true,
       resizeToAvoidBottomInset: false,
-      body: PcEdgeFade(child: shell),
+      body: shell,
       bottomNavigationBar: PcBottomBar(
         items: AppShell.items,
         index: shell.currentIndex,

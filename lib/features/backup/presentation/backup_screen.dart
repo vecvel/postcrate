@@ -33,89 +33,94 @@ class BackupScreen extends ConsumerWidget {
       body: SafeArea(
         top: false,
         bottom: false,
-        child: ListView(
-          padding: EdgeInsets.only(top: PcEdgeFade.topContentInset(context), bottom: PcBottomBar.contentInset(context)),
-          children: [
-            const PcHeader(title: 'Backup'),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: PcSpace.gutter),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  PcCard(
-                    padding: const EdgeInsets.all(PcSpace.lg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const PcIconTile(icon: PcIcons.archive, size: 40),
-                        const SizedBox(height: PcSpace.sm),
-                        Text('Back up to a file', style: context.text.titleMedium),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Packs every post and file into one backup file. Save it to Files, Google Drive, iCloud Drive or a computer.',
-                          style: context.text.bodyMedium,
-                        ),
-                        const SizedBox(height: PcSpace.md),
-                        Text(
-                          '${posts.length} posts · ${files.length} files · ${fileSizeLabel(bytes)}',
-                          style: context.text.bodySmall,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          s.lastBackupAt == null
-                              ? 'No backup yet'
-                              : 'Last backup ${dateTimeLabel(s.lastBackupAt!)}'
-                                    '${changed == 0 ? '' : ' · $changed changed since'}',
-                          style: context.text.bodySmall!.copyWith(
-                            color: s.lastBackupAt == null || changed > 0 ? c.warning : c.textTertiary,
-                          ),
-                        ),
-                        const SizedBox(height: PcSpace.md),
-                        Builder(
-                          builder: (buttonContext) => PcButton(
-                            label: s.busy && s.progress != null ? s.progress! : 'Create backup',
-                            icon: PcIcons.downloadDoc,
-                            expand: true,
-                            loading: s.busy,
-                            onPressed: posts.isEmpty ? null : () => _backUp(buttonContext, ref),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const PcSectionLabel('Restore'),
-                  PcCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Open a Postcrate backup file to bring back everything, or only the days you pick. '
-                          'Posts you edited after the backup are kept, and nothing is deleted.',
-                          style: context.text.bodyMedium,
-                        ),
-                        const SizedBox(height: PcSpace.md),
-                        PcButton.secondary(
-                          label: 'Choose backup file',
-                          icon: PcIcons.folder,
-                          expand: true,
-                          onPressed: s.busy ? null : () => _restore(context, ref),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: PcSpace.xl),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      'Postcrate has no accounts and no servers. Your posts live on this device, and backups go only '
-                      'where you save them.',
-                      style: context.text.bodySmall,
-                    ),
-                  ),
-                ],
-              ),
+        child: PcEdgeFade(
+          child: ListView(
+            padding: EdgeInsets.only(
+              top: PcEdgeFade.topContentInset(context),
+              bottom: PcBottomBar.contentInset(context),
             ),
-          ],
+            children: [
+              const PcHeader(title: 'Backup'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: PcSpace.gutter),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    PcCard(
+                      padding: const EdgeInsets.all(PcSpace.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const PcIconTile(icon: PcIcons.archive, size: 40),
+                          const SizedBox(height: PcSpace.sm),
+                          Text('Back up to a file', style: context.text.titleMedium),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Packs every post and file into one backup file. Save it to Files, Google Drive, iCloud Drive or a computer.',
+                            style: context.text.bodyMedium,
+                          ),
+                          const SizedBox(height: PcSpace.md),
+                          Text(
+                            '${posts.length} posts · ${files.length} files · ${fileSizeLabel(bytes)}',
+                            style: context.text.bodySmall,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            s.lastBackupAt == null
+                                ? 'No backup yet'
+                                : 'Last backup ${dateTimeLabel(s.lastBackupAt!)}'
+                                      '${changed == 0 ? '' : ' · $changed changed since'}',
+                            style: context.text.bodySmall!.copyWith(
+                              color: s.lastBackupAt == null || changed > 0 ? c.warning : c.textTertiary,
+                            ),
+                          ),
+                          const SizedBox(height: PcSpace.md),
+                          Builder(
+                            builder: (buttonContext) => PcButton(
+                              label: s.busy && s.progress != null ? s.progress! : 'Create backup',
+                              icon: PcIcons.downloadDoc,
+                              expand: true,
+                              loading: s.busy,
+                              onPressed: posts.isEmpty ? null : () => _backUp(buttonContext, ref),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const PcSectionLabel('Restore'),
+                    PcCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Open a Postcrate backup file to bring back everything, or only the days you pick. '
+                            'Posts you edited after the backup are kept, and nothing is deleted.',
+                            style: context.text.bodyMedium,
+                          ),
+                          const SizedBox(height: PcSpace.md),
+                          PcButton.secondary(
+                            label: 'Choose backup file',
+                            icon: PcIcons.folder,
+                            expand: true,
+                            onPressed: s.busy ? null : () => _restore(context, ref),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: PcSpace.xl),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        'Postcrate has no accounts and no servers. Your posts live on this device, and backups go only '
+                        'where you save them.',
+                        style: context.text.bodySmall,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

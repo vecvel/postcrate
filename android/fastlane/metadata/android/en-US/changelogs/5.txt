@@ -1,0 +1,1 @@
+Smoother edges: page titles sit right under the status bar again, the fade at the top and bottom only appears while you scroll, the last post sits just above the tabs, and taps on the tab bar no longer open the post behind it.

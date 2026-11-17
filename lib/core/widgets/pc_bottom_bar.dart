@@ -24,13 +24,15 @@ class PcBottomBar extends StatelessWidget {
   /// How far above the tiles the content starts to fade.
   static const fadeAbove = 64.0;
 
-  /// Space screens should leave at the bottom so their last item can scroll
-  /// clear of the tiles and the fade.
-  static double contentInset(BuildContext context) =>
-      fadeAbove + tilesHeight + MediaQuery.paddingOf(context).bottom + PcSpace.md;
+  /// Space screens leave at the bottom so their last item rests just above
+  /// the tiles (the fade is off at the end of a page). Under the shell's
+  /// `Scaffold(extendBody: true)` a page's bottom padding already covers the
+  /// bar (tiles plus safe area), so this adds one spacing step to it.
+  static double contentInset(BuildContext context) => MediaQuery.paddingOf(context).bottom + PcSpace.md;
 
-  /// Height of the faded strip at the bottom of the screen.
-  static double fadeHeight(BuildContext context) => fadeAbove + tilesHeight + MediaQuery.paddingOf(context).bottom;
+  /// Height of the faded strip at the bottom of the screen, measured from
+  /// inside a tab page (where the bottom padding is the bar).
+  static double fadeHeight(BuildContext context) => fadeAbove + MediaQuery.paddingOf(context).bottom;
 
   final List<PcBarItem> items;
   final int index;
@@ -39,17 +41,24 @@ class PcBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.paddingOf(context).bottom;
-    return Padding(
-      padding: EdgeInsets.only(bottom: bottom),
-      child: SizedBox(
-        height: tilesHeight,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: PcSpace.xl),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              for (var i = 0; i < items.length; i++) _Tile(item: items[i], selected: i == index, onTap: () => onTap(i)),
-            ],
+    // The bar draws nothing behind the tiles, but taps anywhere on it (the
+    // gaps between tiles, the home indicator strip) must not reach the posts
+    // underneath. A transparent ColoredBox hit-tests as opaque.
+    return ColoredBox(
+      color: const Color(0x00000000),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: bottom),
+        child: SizedBox(
+          height: tilesHeight,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: PcSpace.xl),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                for (var i = 0; i < items.length; i++)
+                  _Tile(item: items[i], selected: i == index, onTap: () => onTap(i)),
+              ],
+            ),
           ),
         ),
       ),
@@ -57,53 +66,89 @@ class PcBottomBar extends StatelessWidget {
   }
 }
 
-/// Fades [child] out toward both screen edges along a smootherstep curve:
-/// at the top under the status bar, and at the bottom over
-/// [PcBottomBar.fadeHeight] behind the floating tab bar. Content dissolves
-/// into the page instead of meeting a hard edge.
-class PcEdgeFade extends StatelessWidget {
+/// Fades a tab page out toward the screen edges along a smootherstep curve,
+/// only while there is content to scroll on that side:
+///
+/// * Top: transparent at the top edge, opaque [topBelowStatusBar] below the
+///   status bar. At rest (scrolled to the top) nothing is faded, so the
+///   header sits right under the status bar.
+/// * Bottom: transparent at the bottom edge, opaque [PcBottomBar.fadeHeight]
+///   above it, behind the floating tab bar. At the end of the page nothing is
+///   faded, so the last item sits right above the tabs.
+///
+/// Each fade eases in over the first [topBelowStatusBar] (top) or
+/// [PcBottomBar.fadeAbove] (bottom) of scrollable content.
+class PcEdgeFade extends StatefulWidget {
   const PcEdgeFade({super.key, required this.child});
 
+  /// The page's vertical scroll view.
   final Widget child;
 
-  /// How far below the status bar the top fade reaches; transparent at the
-  /// top edge, opaque from here down.
+  /// How far below the status bar the top fade reaches.
   static const topBelowStatusBar = 44.0;
 
-  /// Extra space tab pages leave above their header so it rests just below
-  /// the top fade.
-  static const topHeaderGap = 32.0;
-
   /// Top padding for scroll content on tab pages.
-  static double topContentInset(BuildContext context) => MediaQuery.paddingOf(context).top + topHeaderGap;
+  static double topContentInset(BuildContext context) => MediaQuery.paddingOf(context).top;
 
-  static double _smootherstep(double t) => t * t * t * (t * (t * 6 - 15) + 10);
+  static double smootherstep(double t) => t * t * t * (t * (t * 6 - 15) + 10);
+
+  static const steps = 16;
+
+  @override
+  State<PcEdgeFade> createState() => _PcEdgeFadeState();
+}
+
+class _PcEdgeFadeState extends State<PcEdgeFade> {
+  double _top = 0;
+  double _bottom = 1;
+
+  bool _onMetrics(ScrollMetrics m, int depth) {
+    if (depth != 0 || m.axis != Axis.vertical || !m.hasContentDimensions) return false;
+    final top = (m.extentBefore / PcEdgeFade.topBelowStatusBar).clamp(0.0, 1.0);
+    final bottom = (m.extentAfter / PcBottomBar.fadeAbove).clamp(0.0, 1.0);
+    if (top != _top || bottom != _bottom) {
+      setState(() {
+        _top = top;
+        _bottom = bottom;
+      });
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final topFade = MediaQuery.paddingOf(context).top + PcEdgeFade.topBelowStatusBar;
     final bottomFade = PcBottomBar.fadeHeight(context);
-    final topFade = MediaQuery.paddingOf(context).top + topBelowStatusBar;
-    const steps = 16;
-    return ShaderMask(
-      blendMode: BlendMode.dstIn,
-      shaderCallback: (rect) {
-        final h = rect.height;
-        final topEnd = (topFade / h).clamp(0.0, 0.5);
-        final bottomStart = ((h - bottomFade) / h).clamp(topEnd, 1.0);
-        return LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: [
-            for (var i = 0; i <= steps; i++) topEnd * i / steps,
-            for (var i = 0; i <= steps; i++) bottomStart + (1 - bottomStart) * i / steps,
-          ],
-          colors: [
-            for (var i = 0; i <= steps; i++) Color.fromRGBO(0, 0, 0, _smootherstep(i / steps)),
-            for (var i = 0; i <= steps; i++) Color.fromRGBO(0, 0, 0, 1 - _smootherstep(i / steps)),
-          ],
-        ).createShader(rect);
-      },
-      child: child,
+    final top = _top, bottom = _bottom;
+    const steps = PcEdgeFade.steps;
+    double curve(int i) => PcEdgeFade.smootherstep(i / steps);
+
+    return NotificationListener<ScrollMetricsNotification>(
+      onNotification: (n) => _onMetrics(n.metrics, n.depth),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (n) => _onMetrics(n.metrics, n.depth),
+        child: ShaderMask(
+          blendMode: BlendMode.dstIn,
+          shaderCallback: (rect) {
+            final h = rect.height;
+            final topEnd = (topFade / h).clamp(0.0, 0.5);
+            final bottomStart = ((h - bottomFade) / h).clamp(topEnd, 1.0);
+            return LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [
+                for (var i = 0; i <= steps; i++) topEnd * i / steps,
+                for (var i = 0; i <= steps; i++) bottomStart + (1 - bottomStart) * i / steps,
+              ],
+              colors: [
+                for (var i = 0; i <= steps; i++) Color.fromRGBO(0, 0, 0, 1 - top * (1 - curve(i))),
+                for (var i = 0; i <= steps; i++) Color.fromRGBO(0, 0, 0, 1 - bottom * curve(i)),
+              ],
+            ).createShader(rect);
+          },
+          child: widget.child,
+        ),
+      ),
     );
   }
 }

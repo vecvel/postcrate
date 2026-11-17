@@ -76,73 +76,75 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       body: SafeArea(
         top: false,
         bottom: false,
-        child: CustomScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          slivers: [
-            SliverToBoxAdapter(child: SizedBox(height: PcEdgeFade.topContentInset(context))),
-            SliverToBoxAdapter(
-              child: PcHeader(
-                title: 'Library',
-                actions: [
-                  PcIconButton(
-                    icon: PcIcons.folder,
-                    label: 'Collections',
-                    onTap: () => showCollectionsSheet(context, ref),
-                  ),
-                  PcIconButton(icon: PcIcons.plus, label: 'New post', onTap: () => context.push(Routes.newPost)),
-                ],
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: PcSpace.gutter),
-                child: PcTextField(
-                  controller: _search,
-                  hint: 'Search posts',
-                  prefixIcon: PcIcons.search,
-                  textInputAction: TextInputAction.search,
-                  onChanged: (_) => setState(() {}),
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 34 + PcSpace.sm * 2,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: PcSpace.gutter, vertical: PcSpace.sm),
-                  children: [
-                    for (final f in _Filter.values) ...[
-                      PcChip(label: f.label, selected: _filter == f, onTap: () => setState(() => _filter = f)),
-                      const SizedBox(width: 6),
-                    ],
-                    for (final c in collections) ...[
-                      PcChip(
-                        label: c.name,
-                        icon: PcIcons.folder,
-                        selected: _collectionId == c.id,
-                        onTap: () => setState(() => _collectionId = _collectionId == c.id ? null : c.id),
-                      ),
-                      const SizedBox(width: 6),
-                    ],
+        child: PcEdgeFade(
+          child: CustomScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            slivers: [
+              SliverToBoxAdapter(child: SizedBox(height: PcEdgeFade.topContentInset(context))),
+              SliverToBoxAdapter(
+                child: PcHeader(
+                  title: 'Library',
+                  actions: [
+                    PcIconButton(
+                      icon: PcIcons.folder,
+                      label: 'Collections',
+                      onTap: () => showCollectionsSheet(context, ref),
+                    ),
+                    PcIconButton(icon: PcIcons.plus, label: 'New post', onTap: () => context.push(Routes.newPost)),
                   ],
                 ),
               ),
-            ),
-            ...posts.when(
-              loading: () => const [SliverToBoxAdapter(child: SizedBox.shrink())],
-              error: (e, _) => [
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(PcSpace.gutter),
-                    child: PcEmptyState(title: "Couldn't load your posts", body: 'Restart the app and try again.'),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: PcSpace.gutter),
+                  child: PcTextField(
+                    controller: _search,
+                    hint: 'Search posts',
+                    prefixIcon: PcIcons.search,
+                    textInputAction: TextInputAction.search,
+                    onChanged: (_) => setState(() {}),
                   ),
                 ),
-              ],
-              data: (all) => _list(context, all),
-            ),
-            SliverToBoxAdapter(child: SizedBox(height: PcBottomBar.contentInset(context))),
-          ],
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 34 + PcSpace.sm * 2,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: PcSpace.gutter, vertical: PcSpace.sm),
+                    children: [
+                      for (final f in _Filter.values) ...[
+                        PcChip(label: f.label, selected: _filter == f, onTap: () => setState(() => _filter = f)),
+                        const SizedBox(width: 6),
+                      ],
+                      for (final c in collections) ...[
+                        PcChip(
+                          label: c.name,
+                          icon: PcIcons.folder,
+                          selected: _collectionId == c.id,
+                          onTap: () => setState(() => _collectionId = _collectionId == c.id ? null : c.id),
+                        ),
+                        const SizedBox(width: 6),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              ...posts.when(
+                loading: () => const [SliverToBoxAdapter(child: SizedBox.shrink())],
+                error: (e, _) => [
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(PcSpace.gutter),
+                      child: PcEmptyState(title: "Couldn't load your posts", body: 'Restart the app and try again.'),
+                    ),
+                  ),
+                ],
+                data: (all) => _list(context, all),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: PcBottomBar.contentInset(context))),
+            ],
+          ),
         ),
       ),
     );

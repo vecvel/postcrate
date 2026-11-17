@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.0.4]
+
+### Changed
+
+- The top and bottom fades follow the scroll position: none at the top of a page, none at the end, so page titles sit right under the status bar and the last item rests just above the tabs.
+
+### Fixed
+
+- Taps on the tab bar between or below the tabs no longer reach the post underneath.
+- Pages no longer end with a large empty gap above the tab bar.
+
 ## [1.0.3]
 
 ### Changed

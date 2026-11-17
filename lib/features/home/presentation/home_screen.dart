@@ -24,29 +24,31 @@ class HomeScreen extends ConsumerWidget {
       body: SafeArea(
         top: false,
         bottom: false,
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(child: SizedBox(height: PcEdgeFade.topContentInset(context))),
-            SliverToBoxAdapter(
-              child: PcHeader(
-                title: 'Postcrate',
-                showMark: true,
-                actions: [
-                  PcIconButton(icon: PcIcons.plus, label: 'New post', onTap: () => context.push(Routes.newPost)),
-                ],
-              ),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(PcSpace.gutter, 0, PcSpace.gutter, PcBottomBar.contentInset(context)),
-              sliver: posts.when(
-                loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-                error: (e, _) => SliverToBoxAdapter(
-                  child: PcEmptyState(title: "Couldn't load your posts", body: 'Restart the app and try again.'),
+        child: PcEdgeFade(
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(child: SizedBox(height: PcEdgeFade.topContentInset(context))),
+              SliverToBoxAdapter(
+                child: PcHeader(
+                  title: 'Postcrate',
+                  showMark: true,
+                  actions: [
+                    PcIconButton(icon: PcIcons.plus, label: 'New post', onTap: () => context.push(Routes.newPost)),
+                  ],
                 ),
-                data: (all) => SliverList.list(children: _content(context, all, backup)),
               ),
-            ),
-          ],
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(PcSpace.gutter, 0, PcSpace.gutter, PcBottomBar.contentInset(context)),
+                sliver: posts.when(
+                  loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                  error: (e, _) => SliverToBoxAdapter(
+                    child: PcEmptyState(title: "Couldn't load your posts", body: 'Restart the app and try again.'),
+                  ),
+                  data: (all) => SliverList.list(children: _content(context, all, backup)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

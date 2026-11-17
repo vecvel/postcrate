@@ -1,1 +1,1 @@
-A cleaner look: new icons drawn for Postcrate, and posts now fade softly under the status bar and behind the tab bar instead of stopping at a hard edge.
+Smoother edges: page titles sit right under the status bar again, the fade at the top and bottom only appears while you scroll, the last post sits just above the tabs, and taps on the tab bar no longer open the post behind it.
